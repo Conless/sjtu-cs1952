@@ -1,0 +1,81 @@
+#! /usr/bin/vvp
+:ivl_version "11.0 (stable)";
+:ivl_delay_selection "TYPICAL";
+:vpi_time_precision - 10;
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/system.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/vhdl_sys.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/vhdl_textio.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/v2005_math.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/va_math.vpi";
+S_0x562e8fff5d90 .scope module, "led_demo_tb" "led_demo_tb" 2 4;
+ .timescale -9 -10;
+P_0x562e8fff5f20 .param/l "SYSCLK_PERIOD" 0 2 5, +C4<00000000000000000000000000001010>;
+v0x562e90043870_0 .var "NSYSRESET", 0 0;
+v0x562e90043910_0 .var "SYSCLK", 0 0;
+E_0x562e900310a0 .event edge, v0x562e90043910_0;
+S_0x562e8fff5fc0 .scope module, "a" "top_module" 2 32, 3 8 0, S_0x562e8fff5d90;
+ .timescale 0 0;
+v0x562e90043600_0 .net "flag", 0 0, L_0x562e90053c10;  1 drivers
+L_0x7fb7f1e92018 .functor BUFT 1, C4<00000000000000000000000000000101>, C4<0>, C4<0>, C4<0>;
+v0x562e900436a0_0 .net "in", 31 0, L_0x7fb7f1e92018;  1 drivers
+L_0x7fb7f1e92060 .functor BUFT 1, C4<0>, C4<0>, C4<0>, C4<0>;
+v0x562e90043770_0 .net "sel", 0 0, L_0x7fb7f1e92060;  1 drivers
+E_0x562e90030e90 .event edge, v0x562e900433b0_0;
+S_0x562e9002edd0 .scope module, "a" "odd_sel" 3 13, 4 8 0, S_0x562e8fff5fc0;
+ .timescale 0 0;
+    .port_info 0 /INPUT 32 "bus";
+    .port_info 1 /INPUT 1 "sel";
+    .port_info 2 /OUTPUT 1 "check";
+L_0x562e90053c10 .functor XOR 1, L_0x562e90053ad0, L_0x562e90053b70, C4<0>, C4<0>;
+v0x562e9002f000_0 .net *"_ivl_1", 0 0, L_0x562e90053ad0;  1 drivers
+v0x562e90043200_0 .net *"_ivl_3", 0 0, L_0x562e90053b70;  1 drivers
+v0x562e900432c0_0 .net "bus", 31 0, L_0x7fb7f1e92018;  alias, 1 drivers
+v0x562e900433b0_0 .net "check", 0 0, L_0x562e90053c10;  alias, 1 drivers
+v0x562e90043470_0 .net "sel", 0 0, L_0x7fb7f1e92060;  alias, 1 drivers
+L_0x562e90053ad0 .reduce/xor L_0x7fb7f1e92018;
+L_0x562e90053b70 .reduce/nor L_0x7fb7f1e92060;
+    .scope S_0x562e8fff5fc0;
+T_0 ;
+    %wait E_0x562e90030e90;
+    %vpi_call 3 20 "$display", "%b", v0x562e90043600_0 {0 0 0};
+    %jmp T_0;
+    .thread T_0, $push;
+    .scope S_0x562e8fff5d90;
+T_1 ;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v0x562e90043910_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v0x562e90043870_0, 0, 1;
+    %end;
+    .thread T_1;
+    .scope S_0x562e8fff5d90;
+T_2 ;
+    %vpi_call 2 17 "$dumpfile", "wave.vcd" {0 0 0};
+    %vpi_call 2 18 "$dumpvars", 32'sb00000000000000000000000000000000, S_0x562e8fff5d90 {0 0 0};
+    %end;
+    .thread T_2;
+    .scope S_0x562e8fff5d90;
+T_3 ;
+    %delay 1000, 0;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v0x562e90043870_0, 0, 1;
+    %delay 10000, 0;
+    %vpi_call 2 26 "$stop" {0 0 0};
+    %end;
+    .thread T_3;
+    .scope S_0x562e8fff5d90;
+T_4 ;
+    %wait E_0x562e900310a0;
+    %delay 50, 0;
+    %load/vec4 v0x562e90043910_0;
+    %nor/r;
+    %assign/vec4 v0x562e90043910_0, 0;
+    %jmp T_4;
+    .thread T_4, $push;
+# The file index is used to find the file name in the following table.
+:file_names 5;
+    "N/A";
+    "<interactive>";
+    "test3.v";
+    "./task3_tb.v";
+    "./task3.v";

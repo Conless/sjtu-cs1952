@@ -1,0 +1,97 @@
+$date
+	Thu Jun 22 17:40:43 2023
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1s
+$end
+$scope module top_module $end
+$var wire 1 ! out $end
+$var reg 1 " clk $end
+$var reg 1 # in $end
+$var reg 1 $ rst $end
+$scope module a $end
+$var wire 1 " clk $end
+$var wire 1 # data $end
+$var wire 1 $ rst $end
+$var reg 1 ! flag $end
+$var reg 3 % state [2:0] $end
+$var reg 1 & suc $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+0&
+b0 %
+0$
+0#
+1"
+0!
+$end
+#5
+1#
+1$
+0"
+#10
+b1 %
+1"
+#15
+0"
+0#
+#20
+b10 %
+1"
+#25
+0"
+1#
+#30
+b11 %
+1"
+#35
+0"
+#40
+b1 %
+1&
+1"
+#45
+0"
+0#
+#50
+0&
+1!
+b10 %
+1"
+#55
+0"
+1#
+#60
+b11 %
+0!
+1"
+#65
+0"
+#70
+b1 %
+1&
+1"
+#75
+0"
+#80
+0&
+1!
+b0 %
+1"
+#85
+0"
+#90
+b1 %
+0!
+1"
+#95
+0"
+#100
+b0 %
+1"

@@ -1,0 +1,28 @@
+$date
+	Wed Jun 21 16:37:08 2023
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1s
+$end
+$scope module top_module $end
+$var wire 32 ! in [31:0] $end
+$var wire 1 " sel $end
+$var wire 1 # flag $end
+$scope module a $end
+$var wire 32 $ bus [31:0] $end
+$var wire 1 # check $end
+$var wire 1 " sel $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+b101 $
+1#
+0"
+b101 !
+$end
+#1

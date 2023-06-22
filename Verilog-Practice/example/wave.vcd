@@ -1,0 +1,54 @@
+$date
+	Wed Jun 21 16:25:40 2023
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1s
+$end
+$scope module testBench $end
+$var wire 2 ! S [0:1] $end
+$var wire 1 " Cout $end
+$var reg 2 # A [0:1] $end
+$var reg 2 $ B [0:1] $end
+$var reg 1 % Cin $end
+$scope module U $end
+$var wire 1 % Cin $end
+$var wire 2 & X [0:1] $end
+$var wire 2 ' Y [0:1] $end
+$var reg 1 " Cout $end
+$var reg 2 ( S [0:1] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+b11 (
+b10 '
+b0 &
+1%
+b10 $
+b0 #
+0"
+b11 !
+$end
+#10
+1"
+b0 !
+b0 (
+b1 #
+b1 &
+#30
+0"
+b10 !
+b10 (
+b0 $
+b0 '
+#50
+1"
+b0 !
+b0 (
+b11 #
+b11 &
+#70

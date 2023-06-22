@@ -1,0 +1,49 @@
+#! /usr/bin/vvp
+:ivl_version "11.0 (stable)";
+:ivl_delay_selection "TYPICAL";
+:vpi_time_precision + 0;
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/system.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/vhdl_sys.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/vhdl_textio.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/v2005_math.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/va_math.vpi";
+S_0x55b5f9f43e30 .scope module, "top_module" "top_module" 2 8;
+ .timescale 0 0;
+v0x55b5f9f552c0_0 .net "flag", 0 0, L_0x55b5f9f65750;  1 drivers
+L_0x7f69a6955018 .functor BUFT 1, C4<00000000000000000000000000000101>, C4<0>, C4<0>, C4<0>;
+v0x55b5f9f55360_0 .net "in", 31 0, L_0x7f69a6955018;  1 drivers
+L_0x7f69a6955060 .functor BUFT 1, C4<0>, C4<0>, C4<0>, C4<0>;
+v0x55b5f9f55430_0 .net "sel", 0 0, L_0x7f69a6955060;  1 drivers
+E_0x55b5f9f0b420 .event edge, v0x55b5f9f55070_0;
+S_0x55b5f9f43fe0 .scope module, "a" "odd_sel" 2 12, 3 8 0, S_0x55b5f9f43e30;
+ .timescale 0 0;
+    .port_info 0 /INPUT 32 "bus";
+    .port_info 1 /INPUT 1 "sel";
+    .port_info 2 /OUTPUT 1 "check";
+L_0x55b5f9f65750 .functor XOR 1, L_0x55b5f9f65610, L_0x55b5f9f656b0, C4<0>, C4<0>;
+v0x55b5f9f0acf0_0 .net *"_ivl_1", 0 0, L_0x55b5f9f65610;  1 drivers
+v0x55b5f9f54ef0_0 .net *"_ivl_3", 0 0, L_0x55b5f9f656b0;  1 drivers
+v0x55b5f9f54fb0_0 .net "bus", 31 0, L_0x7f69a6955018;  alias, 1 drivers
+v0x55b5f9f55070_0 .net "check", 0 0, L_0x55b5f9f65750;  alias, 1 drivers
+v0x55b5f9f55130_0 .net "sel", 0 0, L_0x7f69a6955060;  alias, 1 drivers
+L_0x55b5f9f65610 .reduce/xor L_0x7f69a6955018;
+L_0x55b5f9f656b0 .reduce/nor L_0x7f69a6955060;
+    .scope S_0x55b5f9f43e30;
+T_0 ;
+    %wait E_0x55b5f9f0b420;
+    %delay 1, 0;
+    %vpi_call 2 20 "$display", "%b", v0x55b5f9f552c0_0 {0 0 0};
+    %jmp T_0;
+    .thread T_0, $push;
+    .scope S_0x55b5f9f43e30;
+T_1 ;
+    %vpi_call 2 23 "$dumpfile", "wave.vcd" {0 0 0};
+    %vpi_call 2 24 "$dumpvars", 32'sb00000000000000000000000000000000, S_0x55b5f9f43e30 {0 0 0};
+    %end;
+    .thread T_1;
+# The file index is used to find the file name in the following table.
+:file_names 4;
+    "N/A";
+    "<interactive>";
+    "task3_tb.v";
+    "./task3.v";

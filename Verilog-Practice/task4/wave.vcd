@@ -1,0 +1,37 @@
+$date
+	Wed Jun 21 17:35:06 2023
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1s
+$end
+$scope module top_module $end
+$var wire 32 ! sum [31:0] $end
+$var reg 32 " in0 [31:0] $end
+$var reg 32 # in1 [31:0] $end
+$scope module a $end
+$var wire 32 $ a [31:0] $end
+$var wire 32 % b [31:0] $end
+$var reg 1 & cin $end
+$var reg 1 ' cout $end
+$var reg 1 ( s $end
+$var reg 32 ) sum [31:0] $end
+$var integer 32 * i [31:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+b100000 *
+bx )
+x(
+x'
+x&
+b1 %
+b10 $
+b1 #
+b10 "
+bx !
+$end

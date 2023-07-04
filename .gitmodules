@@ -1,3 +1,6 @@
 [submodule "RISC-V-Simulator"]
 	path = RISC-V-Simulator
 	url = git@github.com:Conless/RISC-V-Simulator.git
+[submodule "Raft"]
+	path = Raft
+	url = git@github.com:Conless/Raft.git

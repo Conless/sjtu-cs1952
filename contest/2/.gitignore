@@ -1,0 +1,7 @@
+testdata/*
+1914/*
+*.py
+*.zip
+build/
+.vscode/
+.cache/

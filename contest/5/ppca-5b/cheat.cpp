@@ -118,7 +118,7 @@ class Cheat : public Transform {
   void getAllParams(CallExpression *node, std::map<std::string, bool> &result) {
   for (auto arg : node->args) {
     if (arg->is<Variable>()) {
-      arg = transformVariable(arg->as<Variable>());
+      arg->as<Variable>()->name = transformVariable(arg->as<Variable>())->name;
       result.insert({arg->as<Variable>()->name, true});
     } else if (arg->is<CallExpression>()) {
       getAllParams(arg->as<CallExpression>(), result);
@@ -132,9 +132,10 @@ class Cheat : public Transform {
     if (node->value->is<CallExpression>()) {
       std::string callFuncName = node->value->as<CallExpression>()->func;
       if (callFuncName.size() > 5 && callFuncName.substr(0, 5) == "array") {
-        return new SetStatement(transformVariable(node->name), transformExpression(node->value));
+        return new SetStatement(new Variable(node->name->name), transformExpression(node->value));
       }
       getAllParams(node->value->as<CallExpression>(), result);
+      // std::cout << node->value->toString() << '\n';
     }
     std::vector<Variable *> args;
     std::vector<Expression *> params;
@@ -153,12 +154,36 @@ class Cheat : public Transform {
     });
   }
 
+  Statement *normalSetStatement(SetStatement *node) {
+    return new SetStatement(transformVariable(node->name), transformExpression(node->value));
+  }
+
+  Statement *transformForStatement(ForStatement *node) override {
+    auto nextLayer = conless::varNameMap.top();
+    conless::varNameMap.push(nextLayer);
+    Statement *init, *update;
+    if (node->init->is<SetStatement>()) {
+      init = normalSetStatement(node->init->as<SetStatement>());
+    } else {
+      init = transformStatement(node->init);
+    }
+    if (node->body->is<SetStatement>()) {
+      update = normalSetStatement(node->update->as<SetStatement>());
+    } else {
+      update = transformStatement(node->update);
+    }
+    auto stmt = new ForStatement(init, transformExpression(node->test),
+                                 update, transformStatement(node->body));
+    conless::varNameMap.pop();
+    return stmt;
+  }
+
   Statement *transformBlockStatement(BlockStatement *node) override {
     std::vector<Statement *> body;
     auto nextLayer = conless::varNameMap.top();
     conless::varNameMap.push(nextLayer);
     for (auto stmt : node->body) {
-      std::cout << "Visiting: " << stmt->toString() << '\n';
+      // std::cout << "Visiting: " << stmt->toString() << '\n';
       if (stmt->is<SetStatement>()) {
         auto returnStmt = transformSetStatement(stmt->as<SetStatement>());
         if (returnStmt->is<BlockStatement>()) {
@@ -166,8 +191,10 @@ class Cheat : public Transform {
             body.push_back(blockedStmt);
             // std::cout << blockedStmt->toString() << '\n';
           }
-          continue;
+        } else {
+          body.push_back(returnStmt);
         }
+        continue;
       }
       body.push_back(transformStatement(stmt));
     }
@@ -189,11 +216,11 @@ class Fix : public Transform {
  public:
   Program *transformProgram(Program *node) override {
     std::vector<FunctionDeclaration *> body;
-    for (auto decl : node->body) {
-      body.push_back(transformFunctionDeclaration(decl));
-    }
     for (auto newFunc : conless::newFuncMap) {
       body.push_back(new FunctionDeclaration(newFunc.first, newFunc.second.first, new ExpressionStatement(newFunc.second.second)));
+    }
+    for (auto decl : node->body) {
+      body.push_back(transformFunctionDeclaration(decl));
     }
     return new Program(body);
   }

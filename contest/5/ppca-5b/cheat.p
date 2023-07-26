@@ -4,11 +4,8 @@
 (function (FunctionAAAAAAAD VariableAAAAAAAFArray)
   (array.set VariableAAAAAAAFArray 0 0))
 
-(function (FunctionAAAAAAAE VariableAAAAAAAG VariableAAAAAAAGArray)
-  (array.set VariableAAAAAAAGArray 0 (+ VariableAAAAAAAG 1)))
-
-(function (FunctionAAAAAAAF VariableAAAAAAAF VariableAAAAAAAFArray VariableAAAAAAAH)
-  (array.set VariableAAAAAAAFArray 0 (+ VariableAAAAAAAF (* VariableAAAAAAAH VariableAAAAAAAH))))
+(function (FunctionAAAAAAAE VariableAAAAAAAF VariableAAAAAAAFArray VariableAAAAAAAH)
+  (array.set VariableAAAAAAAFArray 0 (Function+ VariableAAAAAAAF (Function* VariableAAAAAAAH VariableAAAAAAAH))))
 
 (function (Function+ VariableA VariableB)
   (block
@@ -95,14 +92,11 @@
     (for
       (set VariableAAAAAAAG 0)
       (Function< VariableAAAAAAAG VariableAAAAAAAE)
-      (block
-        (set VariableAAAAAAAGArray (array.create 1))
-        (FunctionAAAAAAAE VariableAAAAAAAG VariableAAAAAAAGArray)
-        (set VariableAAAAAAAG (array.get VariableAAAAAAAGArray 0)))
+      (set VariableAAAAAAAG (Function+ VariableAAAAAAAG 1))
       (block
         (set VariableAAAAAAAH (array.get VariableAAAAAAAD VariableAAAAAAAG))
         (set VariableAAAAAAAFArray (array.create 1))
-        (FunctionAAAAAAAF VariableAAAAAAAF VariableAAAAAAAFArray VariableAAAAAAAH)
+        (FunctionAAAAAAAE VariableAAAAAAAF VariableAAAAAAAFArray VariableAAAAAAAH)
         (set VariableAAAAAAAF (array.get VariableAAAAAAAFArray 0))))
     (return VariableAAAAAAAF)))
 

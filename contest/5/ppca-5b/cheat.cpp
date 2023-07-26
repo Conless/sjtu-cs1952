@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <exception>
 #include <iostream>
 #include <map>
 #include <set>
@@ -116,17 +117,18 @@ class Cheat : public Transform {
   }
 
   void getAllParams(CallExpression *node, std::map<std::string, bool> &result) {
-  for (auto arg : node->args) {
-    if (arg->is<Variable>()) {
-      arg->as<Variable>()->name = transformVariable(arg->as<Variable>())->name;
-      result.insert({arg->as<Variable>()->name, true});
-    } else if (arg->is<CallExpression>()) {
-      getAllParams(arg->as<CallExpression>(), result);
+    for (auto arg : node->args) {
+      if (arg->is<Variable>()) {
+        arg->as<Variable>()->name = transformVariable(arg->as<Variable>())->name;
+        result.insert({arg->as<Variable>()->name, true});
+      } else if (arg->is<CallExpression>()) {
+        getAllParams(arg->as<CallExpression>(), result);
+      }
     }
-  }
   }
   Statement *transformSetStatement(SetStatement *node) override {
     std::map<std::string, bool> result;
+    // std::cout << "Transforming: " << node->toString() << '\n';
     node->name = transformVariable(node->name);
     result.insert({node->name->name + "Array", true});
     if (node->value->is<CallExpression>()) {
@@ -140,11 +142,15 @@ class Cheat : public Transform {
     std::vector<Variable *> args;
     std::vector<Expression *> params;
     for (auto kv : result) {
+      if (kv.first.size() < 10) {
+        throw RuntimeError(node, kv.first + "is not transformed");
+      }
       args.push_back(new Variable(kv.first));
       params.push_back(new Variable(kv.first));
     }
     std::string funcName = conless::randomFunction();
-    auto arrayGetExpr = new CallExpression("array.set", {new Variable(node->name->name + "Array"), new IntegerLiteral(0), node->value});
+    auto arrayGetExpr = new CallExpression(
+        "array.set", {new Variable(node->name->name + "Array"), new IntegerLiteral(0), node->value});
     conless::newFuncMap.insert({funcName, {args, arrayGetExpr}});
     return new BlockStatement({
         new SetStatement(new Variable(node->name->name + "Array"),
@@ -167,7 +173,7 @@ class Cheat : public Transform {
     } else {
       init = transformStatement(node->init);
     }
-    if (node->body->is<SetStatement>()) {
+    if (node->update->is<SetStatement>()) {
       update = normalSetStatement(node->update->as<SetStatement>());
     } else {
       update = transformStatement(node->update);
@@ -204,7 +210,11 @@ class Cheat : public Transform {
 
   Variable *transformVariable(Variable *node) override {
     if (conless::varNameMap.top().find(node->name) != conless::varNameMap.top().end()) {
-      return new Variable(conless::varNameMap.top()[node->name]);
+      auto nodeName = conless::varNameMap.top()[node->name];
+      if (nodeName.size() < 10) {
+        throw RuntimeError(node, node->name + "not transformed");
+      }
+      return new Variable(nodeName);
     }
     std::string varName = conless::randomVariable();
     conless::varNameMap.top()[node->name] = varName;
@@ -217,7 +227,7 @@ class Fix : public Transform {
   Program *transformProgram(Program *node) override {
     std::vector<FunctionDeclaration *> body;
     for (auto newFunc : conless::newFuncMap) {
-      body.push_back(new FunctionDeclaration(newFunc.first, newFunc.second.first, new ExpressionStatement(newFunc.second.second)));
+      body.push_back(transformFunctionDeclaration(new FunctionDeclaration(newFunc.first, newFunc.second.first, new ExpressionStatement(newFunc.second.second))));
     }
     for (auto decl : node->body) {
       body.push_back(transformFunctionDeclaration(decl));

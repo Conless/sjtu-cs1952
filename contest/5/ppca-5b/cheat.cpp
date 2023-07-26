@@ -11,7 +11,7 @@ namespace conless {
 std::map<std::string, std::string> funcNameMap;
 std::stack<std::map<std::string, std::string>> varNameMap;
 std::set<std::string> buildInNameMap;
-std::map<std::string, std::pair<std::vector<Variable *>, SetStatement *>> newFuncMap;
+std::map<std::string, std::pair<std::vector<Variable *>, CallExpression *>> newFuncMap;
 
 std::string randomFunction() {
   static int cntStr[8] = {0};
@@ -112,7 +112,7 @@ class Cheat : public Transform {
 
     stmt = transformStatement(node->body);
 
-    return new FunctionDeclaration(funcName, params, transformStatement(node->body));
+    return new FunctionDeclaration(funcName, params, stmt);
   }
 
   void getAllParams(CallExpression *node, std::map<std::string, bool> &result) {
@@ -128,7 +128,7 @@ class Cheat : public Transform {
   Statement *transformSetStatement(SetStatement *node) override {
     std::map<std::string, bool> result;
     node->name = transformVariable(node->name);
-    result.insert({node->name->name, true});
+    result.insert({node->name->name + "Array", true});
     if (node->value->is<CallExpression>()) {
       std::string callFuncName = node->value->as<CallExpression>()->func;
       if (callFuncName.size() > 5 && callFuncName.substr(0, 5) == "array") {
@@ -143,8 +143,14 @@ class Cheat : public Transform {
       params.push_back(new Variable(kv.first));
     }
     std::string funcName = conless::randomFunction();
-    conless::newFuncMap.insert({funcName, {args, node}});
-    return new BlockStatement({new SetStatement(new Variable(node->name->name), new IntegerLiteral(rand())), new ExpressionStatement(new CallExpression(funcName, params))});
+    auto arrayGetExpr = new CallExpression("array.set", {new Variable(node->name->name + "Array"), new IntegerLiteral(0), node->value});
+    conless::newFuncMap.insert({funcName, {args, arrayGetExpr}});
+    return new BlockStatement({
+        new SetStatement(new Variable(node->name->name + "Array"),
+                         new CallExpression("array.create", {new IntegerLiteral(1)})),
+        new ExpressionStatement(new CallExpression(funcName, params)),
+        new SetStatement(new Variable(node->name->name), new CallExpression("array.get", {new Variable(node->name->name + "Array"), new IntegerLiteral(0)}))
+    });
   }
 
   Statement *transformBlockStatement(BlockStatement *node) override {
@@ -158,7 +164,7 @@ class Cheat : public Transform {
         if (returnStmt->is<BlockStatement>()) {
           for (auto blockedStmt : returnStmt->as<BlockStatement>()->body) {
             body.push_back(blockedStmt);
-            std::cout << blockedStmt->toString() << '\n';
+            // std::cout << blockedStmt->toString() << '\n';
           }
           continue;
         }
@@ -187,7 +193,7 @@ class Fix : public Transform {
       body.push_back(transformFunctionDeclaration(decl));
     }
     for (auto newFunc : conless::newFuncMap) {
-      body.push_back(new FunctionDeclaration(newFunc.first, newFunc.second.first, newFunc.second.second));
+      body.push_back(new FunctionDeclaration(newFunc.first, newFunc.second.first, new ExpressionStatement(newFunc.second.second)));
     }
     return new Program(body);
   }
@@ -221,7 +227,7 @@ int main() {
   srand(time(&t));
   auto code = scanProgram(std::cin);
   auto cheat = Cheat().transformProgram(code);
-  printf("\n\n\n\n\n\n\n\n\n\n");
+  // printf("\n\n\n\n\n\n\n\n\n\n");
   auto program = Fix().transformProgram(cheat);
   std::cout << program->toString();
   return 0;
